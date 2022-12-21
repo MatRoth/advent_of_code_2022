@@ -50,8 +50,9 @@ get_dir_size <- function(tree,result = c()){
 get_all_dir_sizes <- function(tree){
   result_all = list()
   if(length(tree$children)==0) {
-    result_all[[tree$name]] <- get_dir_size(tree)
-    return(result_all)}
+    base_res <- list()
+    base_res[[tree$name]] <- get_dir_size(tree)
+    return(base_res)}
   result_all[[tree$name]] <- get_dir_size(tree)
   inter_res<- map(tree$children,get_all_dir_sizes)|>flatten()
   c(result_all,inter_res)
@@ -66,10 +67,18 @@ get_all_dir_sizes(tree)|>
 
 get_all_dir_sizes(tree)|>
   map(parse_number)|>
+  map(unique)|>
   map(sum)|>
   Filter(f =\(x)x>=8381165)|>
   unlist()|>
-  sort()
-  
+  sort() -> results
 
+
+get_all_dir_sizes(tree)|>
+  map(parse_number)|>
+  map(unique)|>
+  map(sum)|>
+  Filter(f =\(x)x>=30000000-(70000000-results["root"]))|>
+  unlist()|>
+  sort()
 
